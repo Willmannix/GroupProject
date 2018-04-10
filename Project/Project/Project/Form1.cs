@@ -44,7 +44,7 @@ namespace Project
 
         private void Form1_Load(object sender, EventArgs e)                  /*====*/
         {
-            button10.Enabled = false; // Disable for the time being
+            //button10.Enabled = false; // Disable for the time being
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -191,6 +191,46 @@ namespace Project
             }
         }
 
+        public void multipleBirths()
+        {
+            listPerson.Sort(new ListByAge());
+            for (int i = 0; i < listPerson.Count; i++)
+            {
+                int temp= DuplicateBirth(listPerson[i]);
+                if (temp == 2)
+                {
+                    ListViewItem list = new ListViewItem(listPerson[i + 1].getName());
+                    ListViewItem list1 = new ListViewItem(listPerson[i].getName());
+
+                    list.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
+                    list1.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
+
+                    list.SubItems.Add("Twin");
+                    list1.SubItems.Add("Twin");
+
+                    _display.Items.Add(list);
+                    _display.Items.Add(list1);
+
+                    i++;
+                }
+                else if (temp == 3)
+                {
+                    ListViewItem lvi = new ListViewItem(listPerson[i].getName());
+                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
+                    lvi.SubItems.Add("Triplet");
+                    _display.Items.Add(lvi);
+
+                }
+                else if (temp == 4)
+                {
+                    ListViewItem lvi = new ListViewItem(listPerson[i].getName());
+                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
+                    lvi.SubItems.Add("Quadruplet");
+                    _display.Items.Add(lvi);
+                }
+            }
+        }
+
         private int DuplicateBirth(Person person)
         {
             int count = 1;
@@ -210,13 +250,6 @@ namespace Project
                 }
             }
             return count;
-        }
-
-        public void multipleBirths()
-        {
-            //List any / all multiple births: nicknames of children who are 
-            //part of a multiple birth. The program should state if they 
-            //are twins, triplets quads etc.  
         }
 
         public void addChild()
@@ -440,6 +473,9 @@ namespace Project
         public void schoolTimes()
         {
             int year = 0;
+
+            bool result = false;
+
             using (Form2 form2 = new Form2())
             {
                 if (form2.ShowDialog() == DialogResult.OK)
@@ -453,44 +489,55 @@ namespace Project
                         year = Convert.ToInt32(form2.Year);
                     }
 
+                    result = true;
+
                 }
             }
 
-            DateTime temp = new DateTime(year, 1, 1);
-            foreach (Person p in listPerson)
+            if (result)
             {
-                DateTime tempDate = new DateTime();
-                if (temp == DateTime.Today)
+                DateTime temp = new DateTime(year, 1, 1);
+                foreach (Person p in listPerson)
                 {
-                    tempDate = (p.DOB.AddDays(temp.Day));
-                    tempDate = (p.DOB.AddMonths(temp.Month));
-                    tempDate = (p.DOB.AddYears(temp.Year));
-                }
-                tempDate = (p.DOB.AddYears(DateTime.Today.Year - temp.Year));
-                ListViewItem lvi = new ListViewItem(p.getName());
-                lvi.SubItems.Add(CalculateAge(tempDate).ToString());
+                    DateTime tempDate = new DateTime();
+                    if (temp == DateTime.Today)
+                    {
+                        tempDate = (p.DOB.AddDays(temp.Day));
+                        tempDate = (p.DOB.AddMonths(temp.Month));
+                        tempDate = (p.DOB.AddYears(temp.Year));
+                    }
+                    tempDate = (p.DOB.AddYears(DateTime.Today.Year - temp.Year));
+                    ListViewItem lvi = new ListViewItem(p.getName());
+                    lvi.SubItems.Add(CalculateAge(tempDate).ToString());
 
-                if (CalculateAge(tempDate) >= 1 && CalculateAge(tempDate) < 5)
-                {
-                    lvi.SubItems.Add("Pre school");
+                    if (CalculateAge(tempDate) >= 1 && CalculateAge(tempDate) < 5)
+                    {
+                        lvi.SubItems.Add("Pre school");
+                    }
+                    else if (CalculateAge(tempDate) >= 5 && CalculateAge(tempDate) <= 11)
+                    {
+                        lvi.SubItems.Add("Primary School");
+                    }
+                    else if (CalculateAge(tempDate) >= 12 && CalculateAge(tempDate) <= 18)
+                    {
+                        lvi.SubItems.Add("Secondary School");
+                    }
+                    else if (CalculateAge(tempDate) >= 19 && CalculateAge(tempDate) <= 23)
+                    {
+                        lvi.SubItems.Add("College");
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add("Finished");
+                    }
+                    _display.Items.Add(lvi);
                 }
-                else if (CalculateAge(tempDate) >= 5 && CalculateAge(tempDate) <= 11)
-                {
-                    lvi.SubItems.Add("Primary School");
-                }
-                else if (CalculateAge(tempDate) >= 12 && CalculateAge(tempDate) <= 18)
-                {
-                    lvi.SubItems.Add("Secondary School");
-                }
-                else if (CalculateAge(tempDate) >= 19 && CalculateAge(tempDate) <= 23)
-                {
-                    lvi.SubItems.Add("College");
-                }
-                else
-                {
-                    lvi.SubItems.Add("Finished");
-                }
-                _display.Items.Add(lvi);
+            }
+            if(!result)
+            {
+                MessageBox.Show("Nothing entered, no Info updated!", "Info",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             }
         }
        
@@ -597,7 +644,8 @@ namespace Project
 
         private void button10_Click(object sender, EventArgs e)
         {
-
+            Form3 newForm3 = new Form3();
+            newForm3.ShowDialog();
         }
 
         private void quit_Click(object sender, EventArgs e)
