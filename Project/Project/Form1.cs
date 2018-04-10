@@ -194,46 +194,7 @@ namespace Project
             }
         }
 
-        public void multipleBirths()
-        {
-            //List any / all multiple births: nicknames of children who are 
-            //part of a multiple birth. The program should state if they 
-            //are twins, triplets quads etc.  
-            listPerson.Sort(new ListByAge());
-            for (int i = 0; i < listPerson.Count; i++)
-            {
-                int numFam = FindMultipleBirths(listPerson[i]);
-                if (numFam == 2)
-                {
-                    ListViewItem lvi = new ListViewItem(listPerson[i + 1].getName());
-                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
-                    lvi.SubItems.Add("Twin");
-                    _display.Items.Add(lvi);
-
-                    ListViewItem lvi1 = new ListViewItem(listPerson[i].getName());
-                    lvi1.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
-                    lvi1.SubItems.Add("Twin");
-                    _display.Items.Add(lvi1);
-                    i++;
-                }
-                else if (numFam == 3)
-                {
-                    ListViewItem lvi = new ListViewItem(listPerson[i].getName());
-                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
-                    lvi.SubItems.Add("Triplet");
-                    _display.Items.Add(lvi);
-                }
-                else if (numFam == 4)
-                {
-                    ListViewItem lvi = new ListViewItem(listPerson[i].getName());
-                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
-                    lvi.SubItems.Add("Quadruplet");
-                    _display.Items.Add(lvi);
-                }
-            }
-        }
-
-        private int FindMultipleBirths(Person person)
+        private int DuplicateBirth(Person person)
         {
             int count = 1;
             listPerson.Sort(new ListByAge());
@@ -243,7 +204,7 @@ namespace Project
                 {
                     if (listPerson[i].Equals(person))
                     {
-                        ;
+                        //
                     }
                     else
                     {
@@ -254,24 +215,161 @@ namespace Project
             return count;
         }
 
-            public void addNewChild()
+        public void multipleBirths()
+        {
+            //List any / all multiple births: nicknames of children who are 
+            //part of a multiple birth. The program should state if they 
+            //are twins, triplets quads etc.  
+
+            listPerson.Sort(new ListByAge());
+            for (int i = 0; i < listPerson.Count; i++)
+            {
+                int temp = DuplicateBirth(listPerson[i]);
+                if (temp == 2)
+                {
+                    ListViewItem lvi = new ListViewItem(listPerson[i + 1].getName());
+                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
+                    lvi.SubItems.Add("Twins");
+                    _display.Items.Add(lvi);
+
+                    ListViewItem lvi1 = new ListViewItem(listPerson[i].getName());
+                    lvi1.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
+                    lvi1.SubItems.Add("Twins");
+                    _display.Items.Add(lvi1);
+                    i++;
+                }
+                else if (temp == 3)
+                {
+                    ListViewItem lvi = new ListViewItem(listPerson[i].getName());
+                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
+                    lvi.SubItems.Add("Triplets");
+                    _display.Items.Add(lvi);
+                }
+                else if (temp == 4)
+                {
+                    ListViewItem lvi = new ListViewItem(listPerson[i].getName());
+                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
+                    lvi.SubItems.Add("Quadruplets");
+                    _display.Items.Add(lvi);
+                }
+            }
+        }
+
+        public void addChild()
         {
             //Add new child - nickname, date of birth and
             //comment should be saved for the new child.The new details 
             //should be save in the file and program data refreshed.
 
+            string name = "";
+            DateTime DOB = new DateTime();
+            string likes = "";
+
+            bool present = false;
+
+            using (AddChild AddChildToList = new AddChild())
+            {
+                if (AddChildToList.ShowDialog() == DialogResult.OK)
+                {
+                    name = AddChildToList.FullName;
+                    DOB = DateTime.Parse(AddChildToList.DateOfBirth);
+                    likes = AddChildToList.Likes;
+
+                    foreach (Person p in listPerson)
+                    {
+                        if (p.name == name && p.DOB == DOB)
+                        {
+                            present = true;
+                            MessageBox.Show(name + " Is already a part of the list, please try again!");
+                        }
+                    }
+
+                    if (!present)
+                    {
+                        Person temp = new Person(name, DOB, likes);
+                        listPerson.Add(temp);
+
+                        string newChild = Environment.NewLine + name + "-" + DOB.ToString("dd/MM/yyyy") + "-" + likes;
+
+                        File.AppendAllText("MaCaveFamily.txt", newChild);
+
+                        MessageBox.Show("You have successfully added " + name + " to the list!");
+                    }
+                }
+            }
         }
 
         public void nameNextBaby()
         {
-                //Name the next baby - An exciting algorithm that you 
-                //come up with for Mrs.McCave’s next baby name.
+            //Name the next baby - An exciting algorithm that you 
+            //come up with for Mrs.McCave’s next baby name.
+
+            string[] FistName = { "Baldy","Chubby","Clean","Dazzling","Drab","Fancy",
+                "Flabby","Gorgeous","Long",
+                "Plain","Scruffy","Skinny"};
+
+            Random rand = new Random();
+
+            string lastname = "";
+            int indexFirstName = rand.Next(FistName.Length);
+
+            if (FistName[indexFirstName] == "Baldy")
+            {
+                lastname = "Mcaldy";
+            }
+            if (FistName[indexFirstName] == "Chubby")
+            {
+                lastname = "O'ruddy";
+            }
+            if (FistName[indexFirstName] == "Clean")
+            {
+                lastname = "Arlene";
+            }
+            if (FistName[indexFirstName] == "Dazzling")
+            {
+                lastname = "Darragh";
+            }
+            if (FistName[indexFirstName] == "Drab")
+            {
+                lastname = "McRab";
+            }
+            if (FistName[indexFirstName] == "Fancy")
+            {
+                lastname = "Pancy";
+            }
+            if (FistName[indexFirstName] == "Flabby")
+            {
+                lastname = "O'Toole";
+            }
+            if (FistName[indexFirstName] == "Gorgeous")
+            {
+                lastname = "George";
+            }
+            if (FistName[indexFirstName] == "Plain")
+            {
+                lastname = "Jane";
+            }
+            if (FistName[indexFirstName] == "Scruffy")
+            {
+                lastname = "McGuffy";
+            }
+            if (FistName[indexFirstName] == "Skinny")
+            {
+                lastname = "Mini";
+            }
+            if (FistName[indexFirstName] == "Long")
+            {
+                lastname = "John";
+            }
+
+            MessageBox.Show(FistName[indexFirstName] + " " + lastname);
+
         }
 
         public void allowanceMonth()
         {
-                //Calculate Mrs.McCave’s children’s allowance for the current month.
-                //http://www.citizensinformation.ie/en/social_welfare/social_welfare_payments/social_welfare_payments_to_families_and_children/child_benefit.html 
+            //Calculate Mrs.McCave’s children’s allowance for the current month.
+
         }
 
         public void allowanceYear()
@@ -282,6 +380,7 @@ namespace Project
 
         public void schoolTimes()
         {
+
 
         }
 
@@ -352,17 +451,16 @@ namespace Project
             _display.Items.Clear();
 
             multipleBirths();
-
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-
+            addChild();
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
-
+            nameNextBaby();
         }
 
         private void button8_Click(object sender, EventArgs e)
