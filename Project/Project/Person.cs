@@ -8,35 +8,40 @@ namespace Project
 {
     class Person
     {
+        //private string Name;
+        //private DateTime insertDOB;
+        //private string insertComments;
+
         public string name { get; set; }
-        public string DOB { get; set; }
-        public string likes { get; set; }
+        public DateTime DOB { get; set; }
+        public string comments { get; set; }
 
         public Person()
         {
             this.name = "";
-            this.DOB = "";
-            this.likes = "";
+            this.DOB = new DateTime();
+            this.comments = "";
         }
 
-        public Person(string Name, string DOB, string Likes)
+        public Person(string Name, DateTime DOB, string Likes)
         {
             this.name = Name;
             this.DOB = DOB;
-            this.likes = Likes;
+            this.comments = Likes;
         }
+
 
         public string getName()
         {
             return this.name;
         }
-        public string getDOB()
+        public DateTime getDOB()
         {
             return this.DOB;
         }
-        public string getLikes()
+        public string getComments()
         {
-            return this.likes;
+            return this.comments;
         }
     }
 }
