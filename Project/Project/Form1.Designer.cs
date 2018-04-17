@@ -48,6 +48,7 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.quit = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -56,6 +57,7 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.DimGray;
+            this.panel1.Controls.Add(this.quit);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.button10);
             this.panel1.Controls.Add(this.pictureBox1);
@@ -320,6 +322,16 @@
             this.columnHeader3.Text = "Likes";
             this.columnHeader3.Width = 239;
             // 
+            // quit
+            // 
+            this.quit.Location = new System.Drawing.Point(3, 440);
+            this.quit.Name = "quit";
+            this.quit.Size = new System.Drawing.Size(141, 23);
+            this.quit.TabIndex = 12;
+            this.quit.Text = "Exit";
+            this.quit.UseVisualStyleBackColor = true;
+            this.quit.Click += new System.EventHandler(this.quit_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -365,6 +377,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.Button quit;
     }
 }
 

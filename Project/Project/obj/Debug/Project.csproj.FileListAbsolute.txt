@@ -29,3 +29,5 @@ C:\Users\Nikita.DESKTOP-PIN13SH\Desktop\GroupProject-master\Project\Project\obj\
 C:\Users\Nikita.DESKTOP-PIN13SH\Desktop\GroupProject-master\Project\Project\obj\Debug\Project.pdb
 C:\Users\Nikita.DESKTOP-PIN13SH\Desktop\GroupProject-master\Project\Project\obj\Debug\Project.csprojResolveAssemblyReference.cache
 C:\Users\Nikita.DESKTOP-PIN13SH\Desktop\GroupProject-master\Project\Project\obj\Debug\Project.AddChild.resources
+C:\Users\Nikita.DESKTOP-PIN13SH\Desktop\GroupProject-master\Project\Project\obj\Debug\Project.Form2.resources
+C:\Users\Nikita.DESKTOP-PIN13SH\Desktop\GroupProject-master\Project\Project\obj\Debug\Project.Form3.resources

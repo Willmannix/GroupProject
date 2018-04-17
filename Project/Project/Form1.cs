@@ -24,6 +24,8 @@ namespace Project
         string insertComments = "";
         string tempDOB = "";
 
+        double pre, prim, sec, college, finished;
+
         public string[] Dates;
         DateTime currentdate = DateTime.Now;
 
@@ -44,7 +46,7 @@ namespace Project
 
         private void Form1_Load(object sender, EventArgs e)                  /*====*/
         {
-
+            //button10.Enabled = false; // Disable for the time being
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -104,7 +106,6 @@ namespace Project
 
                         Person newPerson = new Person(name, insertDOB, insertComments);
                         listPerson.Add(newPerson);
-
                     }
                 }
             }
@@ -118,11 +119,9 @@ namespace Project
 
         public void birthdays()
         {
-
             _display.Items.Clear();
 
             DateTime tempDate = new DateTime();
-
 
             foreach (Person p in listPerson)
             {
@@ -194,6 +193,46 @@ namespace Project
             }
         }
 
+        public void multipleBirths()
+        {
+            listPerson.Sort(new ListByAge());
+            for (int i = 0; i < listPerson.Count; i++)
+            {
+                int temp= DuplicateBirth(listPerson[i]);
+                if (temp == 2)
+                {
+                    ListViewItem list = new ListViewItem(listPerson[i + 1].getName());
+                    ListViewItem list1 = new ListViewItem(listPerson[i].getName());
+
+                    list.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
+                    list1.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
+
+                    list.SubItems.Add("Twin");
+                    list1.SubItems.Add("Twin");
+
+                    _display.Items.Add(list);
+                    _display.Items.Add(list1);
+
+                    i++;
+                }
+                else if (temp == 3)
+                {
+                    ListViewItem lvi = new ListViewItem(listPerson[i].getName());
+                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
+                    lvi.SubItems.Add("Triplet");
+                    _display.Items.Add(lvi);
+
+                }
+                else if (temp == 4)
+                {
+                    ListViewItem lvi = new ListViewItem(listPerson[i].getName());
+                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
+                    lvi.SubItems.Add("Quadruplet");
+                    _display.Items.Add(lvi);
+                }
+            }
+        }
+
         private int DuplicateBirth(Person person)
         {
             int count = 1;
@@ -213,46 +252,6 @@ namespace Project
                 }
             }
             return count;
-        }
-
-        public void multipleBirths()
-        {
-            //List any / all multiple births: nicknames of children who are 
-            //part of a multiple birth. The program should state if they 
-            //are twins, triplets quads etc.  
-
-            listPerson.Sort(new ListByAge());
-            for (int i = 0; i < listPerson.Count; i++)
-            {
-                int temp = DuplicateBirth(listPerson[i]);
-                if (temp == 2)
-                {
-                    ListViewItem lvi = new ListViewItem(listPerson[i + 1].getName());
-                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
-                    lvi.SubItems.Add("Twins");
-                    _display.Items.Add(lvi);
-
-                    ListViewItem lvi1 = new ListViewItem(listPerson[i].getName());
-                    lvi1.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
-                    lvi1.SubItems.Add("Twins");
-                    _display.Items.Add(lvi1);
-                    i++;
-                }
-                else if (temp == 3)
-                {
-                    ListViewItem lvi = new ListViewItem(listPerson[i].getName());
-                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
-                    lvi.SubItems.Add("Triplets");
-                    _display.Items.Add(lvi);
-                }
-                else if (temp == 4)
-                {
-                    ListViewItem lvi = new ListViewItem(listPerson[i].getName());
-                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
-                    lvi.SubItems.Add("Quadruplets");
-                    _display.Items.Add(lvi);
-                }
-            }
         }
 
         public void addChild()
@@ -363,27 +362,187 @@ namespace Project
             }
 
             MessageBox.Show(FistName[indexFirstName] + " " + lastname);
-
         }
 
         public void allowanceMonth()
         {
-            //Calculate Mrs.McCave’s children’s allowance for the current month.
+            int final = 0;
+            
+            listPerson.Sort(new ListByAge());
+            for (int i = 0; i < listPerson.Count; i++)
+            {
+                if (CalculateAge(listPerson[i].DOB) < 18)
+                {
+                    int multi = DuplicateBirth(listPerson[i]);
+                    if (multi == 1)
+                    {
+                        final += 140;
+                    }
+                    else if (multi == 2)
+                    {
+                        final += 210;
 
+                        final += 210;
+                        i++;
+                    }
+                    else
+                    {
+                        final += 280;
+                    }
+                }
+            }
+            ListViewItem monthlyAllowence = new ListViewItem("Monthly allowance total");
+            monthlyAllowence.SubItems.Add(final.ToString());
+            _display.Items.Add(monthlyAllowence);
         }
-
+        
         public void allowanceYear()
         {
-                //Calculate Mrs.McCave’s children’s allowance for the current Year.
-                //http://www.citizensinformation.ie/en/social_welfare/social_welfare_payments/social_welfare_payments_to_families_and_children/child_benefit.html 
+            int final = 0;
+           
+            listPerson.Sort(new ListByAge());
+            for (int i = 0; i < listPerson.Count; i++)
+            {
+                if (CalculateAge(listPerson[i].DOB) < 18)
+                {
+                    int multi = DuplicateBirth(listPerson[i]);
+                    if (multi == 1)
+                    {
+                        DateTime tempP = new DateTime(listPerson[i].DOB.Year, listPerson[i].DOB.Month, listPerson[i].DOB.Day);
+                        int tempFinal = 0;
+                        for (int y = 0; y < 12; y++)
+                        {
+                            if (CalculateAge(tempP.AddMonths(DateTime.Today.Month)) < 18)
+                            {
+                                tempFinal += 140;
+                                tempP = tempP.AddMonths(-1);
+                            }
+                        }
+                        final += tempFinal;
+                    }
+                    else if (multi == 2)
+                    {
+                        Person tempPerson1 = new Person();
+                        tempPerson1 = listPerson[i + 1];
+                        int tempFinal1 = 0;
+                        for (int y = 0; y < 12; y++)
+                        {
+                            if (CalculateAge(tempPerson1.DOB) < 18)
+                            {
+                                tempFinal1 += 210;
+                                tempPerson1.DOB.AddMonths(1);
+                            }
+                        }
+                        final += tempFinal1;
+
+                        Person tempPerson = new Person();
+                        tempPerson = listPerson[i];
+                        int tempFinal = 0;
+                        for (int y = 0; y < 12; y++)
+                        {
+                            if (CalculateAge(tempPerson.DOB) < 18)
+                            {
+                                tempFinal += 210;
+                                tempPerson.DOB.AddMonths(1);
+                            }
+                        }
+                        final += tempFinal;
+
+                        i++;
+                    }
+                    else
+                    {
+                        Person tempP = new Person();
+                        tempP = listPerson[i];
+                        int tempFinal = 0;
+                        for (int y = 0; y < 12; y++)
+                        {
+                            if (CalculateAge(tempP.DOB) < 18)
+                            {
+                                tempFinal += 280;
+                                tempP.DOB.AddMonths(1);
+                            }
+                        }
+                        final += tempFinal;
+                    }
+                }
+            }
+            ListViewItem yearlyAllowence = new ListViewItem("Yearly allowence total");
+            yearlyAllowence.SubItems.Add(final.ToString());
+            _display.Items.Add(yearlyAllowence);
         }
 
         public void schoolTimes()
         {
+            int year = 0;
 
+            bool result = false;
 
+            using (Form2 form2 = new Form2())
+            {
+                if (form2.ShowDialog() == DialogResult.OK)
+                {
+                    if (form2.Year == null)
+                    {
+                        year = DateTime.Today.Year;
+                    }
+                    else
+                    {
+                        year = Convert.ToInt32(form2.Year);
+                    }
+
+                    result = true;
+
+                }
+            }
+
+            if (result)
+            {
+                DateTime temp = new DateTime(year, 1, 1);
+                foreach (Person p in listPerson)
+                {
+                    DateTime tempDate = new DateTime();
+                    if (temp == DateTime.Today)
+                    {
+                        tempDate = (p.DOB.AddDays(temp.Day));
+                        tempDate = (p.DOB.AddMonths(temp.Month));
+                        tempDate = (p.DOB.AddYears(temp.Year));
+                    }
+                    tempDate = (p.DOB.AddYears(DateTime.Today.Year - temp.Year));
+                    ListViewItem lvi = new ListViewItem(p.getName());
+                    lvi.SubItems.Add(CalculateAge(tempDate).ToString());
+
+                    if (CalculateAge(tempDate) >= 1 && CalculateAge(tempDate) < 5)
+                    {
+                        lvi.SubItems.Add("Pre school");
+                    }
+                    else if (CalculateAge(tempDate) >= 5 && CalculateAge(tempDate) <= 11)
+                    {
+                        lvi.SubItems.Add("Primary School");
+                    }
+                    else if (CalculateAge(tempDate) >= 12 && CalculateAge(tempDate) <= 18)
+                    {
+                        lvi.SubItems.Add("Secondary School");
+                    }
+                    else if (CalculateAge(tempDate) >= 19 && CalculateAge(tempDate) <= 23)
+                    {
+                        lvi.SubItems.Add("College");
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add("Finished");
+                    }
+                    _display.Items.Add(lvi);
+                }
+            }
+            if(!result)
+            {
+                MessageBox.Show("Nothing entered, no Info updated!", "Info",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
         }
-
+       
         public void infoGraphic()
         {
 
@@ -465,17 +624,80 @@ namespace Project
 
         private void button8_Click(object sender, EventArgs e)
         {
+            _display.Items.Clear();
 
+            headingRePop();
+            _display.Columns[1].Text = "Total";
+            _display.Columns[2].Text = "";
+
+            allowanceMonth();
+            allowanceYear();
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
+            _display.Items.Clear();
+            schoolTimes();
+
+            headingRePop();
+            _display.Columns[2].Text = "Education";
 
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
+            Form3 newForm3 = new Form3();
 
+            DateTime temp = DateTime.Today;
+
+            foreach (Person p in listPerson)
+            {
+                DateTime tempDate = new DateTime();
+                if (temp == DateTime.Today)
+                {
+                    tempDate = (p.DOB.AddDays(temp.Day));
+                    tempDate = (p.DOB.AddMonths(temp.Month));
+                    tempDate = (p.DOB.AddYears(temp.Year));
+                }
+                tempDate = (p.DOB.AddYears(DateTime.Today.Year - temp.Year));
+                ListViewItem lvi = new ListViewItem(p.getName());
+                lvi.SubItems.Add(CalculateAge(tempDate).ToString());
+
+                if (CalculateAge(tempDate) >= 1 && CalculateAge(tempDate) < 5)
+                {
+                    pre++;
+                }
+                else if (CalculateAge(tempDate) >= 5 && CalculateAge(tempDate) <= 11)
+                {
+                    prim++;
+                }
+                else if (CalculateAge(tempDate) >= 12 && CalculateAge(tempDate) <= 18)
+                {
+                    sec++;
+                }
+                else if (CalculateAge(tempDate) >= 19 && CalculateAge(tempDate) <= 23)
+                {
+                    college++;
+                }
+                else
+                {
+                    finished++;
+                }
+                _display.Items.Add(lvi);
+            }
+
+            newForm3.pre = pre;
+            newForm3.prim = prim;
+            newForm3.sec = sec;
+            newForm3.college = college;
+            newForm3.finished = finished;
+
+            newForm3.ShowDialog();
+        }
+
+        private void quit_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
