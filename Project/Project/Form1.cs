@@ -14,20 +14,20 @@ namespace Project
 {
     public partial class Form1 : Form
     {
-        List<Person> listPerson = new List<Person>();
+        List<Person> listPerson = new List<Person>();    //initialize the datat into a list
 
-        string _fullName = @"-\d+/\d+/\d+\D+";
-        string _dateOfBirth = @"(\d+)/(\d+)/(\d+)";
+        string _fullName = @"-\d+/\d+/\d+\D+";        // Extract the Full name from the list using Regex
+        string _dateOfBirth = @"(\d+)/(\d+)/(\d+)";  // \d is a digit from 0 - 9, etc.
         string _comments = @"(?<=\d+\w+)";
 
         string line = "";
         string insertComments = "";
         string tempDOB = "";
 
-        double pre, prim, sec, college, finished;
+        double pre, prim, sec, college, finished;  //global variables used in the Graph
 
         public string[] Dates;
-        DateTime currentdate = DateTime.Now;
+        DateTime currentdate = DateTime.Now;      //set up the current Time and Date
 
         public Form1()
         {
@@ -64,7 +64,7 @@ namespace Project
 
         }
 
-        public void uploadData()
+        public void uploadData()      //Uploaded data from the file and initialize it
         {
             try
             {
@@ -72,7 +72,7 @@ namespace Project
                 {
                     string name = "";
 
-                    while ((line = sr.ReadLine()) != null)
+                    while ((line = sr.ReadLine()) != null)                              // Exclude expression used for the name
                     {
                         string[] FullName = Regex.Split(line, _fullName);
                         foreach (string match in FullName)
@@ -87,14 +87,14 @@ namespace Project
                             }
                         }
 
-                        string[] substringDob = Regex.Split(line, _dateOfBirth);
+                        string[] substringDob = Regex.Split(line, _dateOfBirth);           //Include expression used to find the Date
                         Match matchDob = Regex.Match(line, _dateOfBirth);
                         if (matchDob.Success)
                         {
                             tempDOB = matchDob.Value;
                         }
 
-                        string[] Comments = Regex.Split(line, _comments);
+                        string[] Comments = Regex.Split(line, _comments);                  //Include expression used to find the Comments
                         foreach (string item in Comments)
                         {
                             insertComments = item;
@@ -102,10 +102,10 @@ namespace Project
 
                         insertComments = insertComments.Replace("-", "");
 
-                        DateTime insertDOB = DateTime.ParseExact(tempDOB, "dd/MM/yyyy", null);
+                        DateTime insertDOB = DateTime.ParseExact(tempDOB, "dd/MM/yyyy", null);  //sets the default format for the date
 
                         Person newPerson = new Person(name, insertDOB, insertComments);
-                        listPerson.Add(newPerson);
+                        listPerson.Add(newPerson);                                               //Add a new Person to the list
                     }
                 }
             }
@@ -119,7 +119,7 @@ namespace Project
 
         public void birthdays()
         {
-            _display.Items.Clear();
+            _display.Items.Clear();                                //Clear the items in the Display box
 
             DateTime tempDate = new DateTime();
 
@@ -137,7 +137,7 @@ namespace Project
                         int currentDay = currentdate.Day;
                         if (day - currentDay > 0 && day - currentDay < 8)
                         {
-                            ListViewItem lvi = new ListViewItem(p.getName());
+                            ListViewItem lvi = new ListViewItem(p.getName());                   //Adds a user to the list into the names column
                             lvi.SubItems.Add(p.getDOB().ToString());
                             _display.Items.Add(lvi);
                         }
@@ -646,53 +646,75 @@ namespace Project
 
         private void button10_Click(object sender, EventArgs e)
         {
-            Form3 newForm3 = new Form3();
+            Form3 form3 = new Form3();
 
-            DateTime temp = DateTime.Today;
+            int year = 0;
 
-            foreach (Person p in listPerson)
+            bool result = false;
+
+            using (Form2 form2 = new Form2())
             {
-                DateTime tempDate = new DateTime();
-                if (temp == DateTime.Today)
+                if (form2.ShowDialog() == DialogResult.OK)
                 {
-                    tempDate = (p.DOB.AddDays(temp.Day));
-                    tempDate = (p.DOB.AddMonths(temp.Month));
-                    tempDate = (p.DOB.AddYears(temp.Year));
-                }
-                tempDate = (p.DOB.AddYears(DateTime.Today.Year - temp.Year));
-                ListViewItem lvi = new ListViewItem(p.getName());
-                lvi.SubItems.Add(CalculateAge(tempDate).ToString());
+                    if (form2.Year == null)
+                    {
+                        year = DateTime.Today.Year;
+                    }
+                    else
+                    {
+                        year = Convert.ToInt32(form2.Year);
+                    }
 
-                if (CalculateAge(tempDate) >= 1 && CalculateAge(tempDate) < 5)
-                {
-                    pre++;
+                    result = true;
+
                 }
-                else if (CalculateAge(tempDate) >= 5 && CalculateAge(tempDate) <= 11)
-                {
-                    prim++;
-                }
-                else if (CalculateAge(tempDate) >= 12 && CalculateAge(tempDate) <= 18)
-                {
-                    sec++;
-                }
-                else if (CalculateAge(tempDate) >= 19 && CalculateAge(tempDate) <= 23)
-                {
-                    college++;
-                }
-                else
-                {
-                    finished++;
-                }
-                _display.Items.Add(lvi);
             }
 
-            newForm3.pre = pre;
-            newForm3.prim = prim;
-            newForm3.sec = sec;
-            newForm3.college = college;
-            newForm3.finished = finished;
+            if (result)
+            {
+                DateTime temp = new DateTime(year, 1, 1);
+                foreach (Person p in listPerson)
+                {
+                    DateTime tempDate = new DateTime();
+                    if (temp == DateTime.Today)
+                    {
+                        tempDate = (p.DOB.AddDays(temp.Day));
+                        tempDate = (p.DOB.AddMonths(temp.Month));
+                        tempDate = (p.DOB.AddYears(temp.Year));
+                    }
+                    tempDate = (p.DOB.AddYears(DateTime.Today.Year - temp.Year));
+                    ListViewItem lvi = new ListViewItem(p.getName());
 
-            newForm3.ShowDialog();
+                    if (CalculateAge(tempDate) >= 1 && CalculateAge(tempDate) < 5)
+                    {
+                        pre++;
+                    }
+                    else if (CalculateAge(tempDate) >= 5 && CalculateAge(tempDate) <= 11)
+                    {
+                        prim++;
+                    }
+                    else if (CalculateAge(tempDate) >= 12 && CalculateAge(tempDate) <= 18)
+                    {
+                        sec++;
+                    }
+                    else if (CalculateAge(tempDate) >= 19 && CalculateAge(tempDate) <= 23)
+                    {
+                        college++;
+                    }
+                    else
+                    {
+                        finished++;
+                    }
+                }
+            }
+
+            form3.pre = pre;
+            form3.prim = prim;
+            form3.sec = sec;
+            form3.college = college;
+            form3.finished = finished;
+
+            form3.ShowDialog();
         }
 
         private void quit_Click(object sender, EventArgs e)

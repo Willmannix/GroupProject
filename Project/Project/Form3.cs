@@ -12,7 +12,7 @@ namespace Project
 {
     public partial class Form3 : Form
     {
-        //public string Year { get; set; }
+        public string Year { get; set; }
 
         
         public double pre, prim, sec, college, finished;
@@ -24,7 +24,7 @@ namespace Project
 
         private void button1_Click(object sender, EventArgs e)
         {
-         
+
         }
 
         private void chart1_Click(object sender, EventArgs e)
@@ -44,10 +44,6 @@ namespace Project
             chart1.Series[0].Points[2].SetValueY(sec);
             chart1.Series[0].Points[3].SetValueY(college);
             chart1.Series[0].Points[4].SetValueY(finished);
-
-            textBox1.Paste("Enter a year");
-
-
         }
     }
 }
