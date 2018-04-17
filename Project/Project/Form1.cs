@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Project
@@ -174,7 +168,7 @@ namespace Project
             foreach (Person p in listPerson)
             {
                 ListViewItem lvi = new ListViewItem(p.getName());
-                lvi.SubItems.Add(CalculateAge(p.getDOB()).ToString());
+                lvi.SubItems.Add(CalculateAge(p.getDOB()).ToString());        
                 lvi.SubItems.Add(p.getComments());
                 _display.Items.Add(lvi);
             }
@@ -189,7 +183,7 @@ namespace Project
                 ListViewItem lvi = new ListViewItem(p.getName());
                 lvi.SubItems.Add(p.getDOB().ToString("dd/MM/yyyy"));
                 lvi.SubItems.Add(p.getComments());
-                _display.Items.Add(lvi);
+                _display.Items.Add(lvi);                           //dislay list into List view
             }
         }
 
@@ -198,11 +192,11 @@ namespace Project
             listPerson.Sort(new ListByAge());
             for (int i = 0; i < listPerson.Count; i++)
             {
-                int temp= DuplicateBirth(listPerson[i]);
+                int temp = DuplicateBirth(listPerson[i]);
                 if (temp == 2)
                 {
                     ListViewItem list = new ListViewItem(listPerson[i + 1].getName());
-                    ListViewItem list1 = new ListViewItem(listPerson[i].getName());
+                    ListViewItem list1 = new ListViewItem(listPerson[i].getName());                          //Used a duplicate here to temporarily fix one set of twins displaying
 
                     list.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
                     list1.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
@@ -218,7 +212,7 @@ namespace Project
                 else if (temp == 3)
                 {
                     ListViewItem lvi = new ListViewItem(listPerson[i].getName());
-                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);
+                    lvi.SubItems.Add(listPerson[i].DOB.Day + "/" + listPerson[i].DOB.Month + "/" + listPerson[i].DOB.Year);          //Re Format for the Date of birth just in case
                     lvi.SubItems.Add("Triplet");
                     _display.Items.Add(lvi);
 
@@ -233,7 +227,7 @@ namespace Project
             }
         }
 
-        private int DuplicateBirth(Person person)
+        private int DuplicateBirth(Person person)       //Check for exact same birthdays
         {
             int count = 1;
             listPerson.Sort(new ListByAge());
@@ -243,7 +237,7 @@ namespace Project
                 {
                     if (listPerson[i].Equals(person))
                     {
-                        //
+                        //* -- *//
                     }
                     else
                     {
@@ -268,7 +262,7 @@ namespace Project
 
             using (AddChild AddChildToList = new AddChild())
             {
-                if (AddChildToList.ShowDialog() == DialogResult.OK)
+                if (AddChildToList.ShowDialog() == DialogResult.OK)             //indicates the return value of the dialog box
                 {
                     name = AddChildToList.FullName;
                     DOB = DateTime.Parse(AddChildToList.DateOfBirth);
@@ -288,11 +282,11 @@ namespace Project
                         Person temp = new Person(name, DOB, likes);
                         listPerson.Add(temp);
 
-                        string newChild = Environment.NewLine + name + "-" + DOB.ToString("dd/MM/yyyy") + "-" + likes;
+                        string newChild = Environment.NewLine + name + "-" + DOB.ToString("dd/MM/yyyy") + "-" + likes;          //Writes into the text file.
 
-                        File.AppendAllText("MaCaveFamily.txt", newChild);
+                        File.AppendAllText("MaCaveFamily.txt", newChild);          
 
-                        MessageBox.Show("You have successfully added " + name + " to the list!");
+                        MessageBox.Show("You have successfully added " + name + " to the list!"); 
                     }
                 }
             }
@@ -361,7 +355,8 @@ namespace Project
                 lastname = "John";
             }
 
-            MessageBox.Show(FistName[indexFirstName] + " " + lastname);
+            MessageBox.Show(FistName[indexFirstName] + " " + lastname);       //Random name generator based off the random first name selected from the list which
+                                                                              //is matched with a rhyming surname
         }
 
         public void allowanceMonth()
@@ -422,7 +417,7 @@ namespace Project
                     }
                     else if (multi == 2)
                     {
-                        Person tempPerson1 = new Person();
+                        Person tempPerson1 = new Person();   
                         tempPerson1 = listPerson[i + 1];
                         int tempFinal1 = 0;
                         for (int y = 0; y < 12; y++)
@@ -548,42 +543,42 @@ namespace Project
 
         }
 
-        public void headingRePop()
+        public void headingRePop()                         // Use to re populate the titles of the List box after each reset
         {
             _display.Columns[0].Text = "Name";
             _display.Columns[1].Text = "Date of birth";
             _display.Columns[2].Text = "Likes";
         }
 
-        public static int CalculateAge(DateTime dob)
+        public static int CalculateAge(DateTime dob)      // Calculate the age compared to todays date
         {
             DateTime currentDate = DateTime.Today;
             int currentYear = currentDate.Year;
             int DOBYear = dob.Year;
             return currentYear - DOBYear;
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)       // Upload and initialize data
         {
             uploadData();
 
             foreach (Person P in listPerson)
             {
-                ListViewItem Person = new ListViewItem(P.getName());
-                Person.SubItems.Add(P.getDOB().ToString("dd/MM/yyyy"));
+                ListViewItem Person = new ListViewItem(P.getName());   
+                Person.SubItems.Add(P.getDOB().ToString("dd/MM/yyyy")); 
                 Person.SubItems.Add(P.getComments());
 
-                _display.Items.Add(Person);
+                _display.Items.Add(Person);            // populate list accordingly.
 
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)         // Birthdays in the next 7 days
         {
             headingRePop();
             birthdays();
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e) // list names sorted started from the oldest
         {
             headingRePop();
             _display.Columns[1].Text = "Age";
@@ -593,7 +588,7 @@ namespace Project
             listByAge();
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e)  // List names by alphabetical order
         {
             _display.Items.Clear();
 
@@ -602,7 +597,7 @@ namespace Project
             headingRePop();
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void button5_Click(object sender, EventArgs e)  // List multi births
         {
             headingRePop();
             _display.Columns[2].Text = "Multi births";
@@ -612,17 +607,17 @@ namespace Project
             multipleBirths();
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void button6_Click(object sender, EventArgs e)  // Add a new child
         {
             addChild();
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void button7_Click(object sender, EventArgs e)  // Random baby name
         {
             nameNextBaby();
         }
 
-        private void button8_Click(object sender, EventArgs e)
+        private void button8_Click(object sender, EventArgs e)  // Allowence for the children per month and year
         {
             _display.Items.Clear();
 
@@ -634,7 +629,7 @@ namespace Project
             allowanceYear();
         }
 
-        private void button9_Click(object sender, EventArgs e)
+        private void button9_Click(object sender, EventArgs e)         //School times
         {
             _display.Items.Clear();
             schoolTimes();
@@ -644,7 +639,7 @@ namespace Project
 
         }
 
-        private void button10_Click(object sender, EventArgs e)
+        private void button10_Click(object sender, EventArgs e)           //re used code from the School times planner for the graph
         {
             Form3 form3 = new Form3();
 
@@ -708,7 +703,7 @@ namespace Project
                 }
             }
 
-            form3.pre = pre;
+            form3.pre = pre;            // Populate the Form 3 chart.
             form3.prim = prim;
             form3.sec = sec;
             form3.college = college;
@@ -717,9 +712,9 @@ namespace Project
             form3.ShowDialog();
         }
 
-        private void quit_Click(object sender, EventArgs e)
+        private void quit_Click(object sender, EventArgs e)        // Quits the program 
         {
-            this.Close();
+            this.Close();              // Close ?
         }
     }
 }
